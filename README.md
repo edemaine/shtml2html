@@ -24,6 +24,7 @@ shtml2html *.shtml           # produces *.html
 * `<!--#include virtual="path"-->` includes a relative path
   * Note: absolute paths are currently relative to the filesystem root.
     TODO: way to specify document root.
+* `<!--#include virtual="path1" virtual="path2"-->` for multiple inclusions
 * `<!--#flastmod file="path"-->`:
   modified date of non-relative path (via `timefmt`)
 * `<!--#flastmod virtual="path"-->`:
@@ -39,3 +40,4 @@ shtml2html *.shtml           # produces *.html
 * `<!--#echo var="value"-->` where `value` is among:
   * `DOCUMENT_NAME`: name of `.html` output (not `.shtml` input)
   * `LAST_MODIFIED`: modified date of `.shtml` input (via `timefmt`)
+* `<!--#comment ...-->` gets removed

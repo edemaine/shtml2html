@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+"civet coffeeNot"
 
 fs from fs
 path from path
@@ -51,37 +52,69 @@ class Convert
       @config.errormsg
 
   convertToString(filename: string = @rootFilename): string
-    html .= fs.readFileSync filename, encoding: 'utf8'
-    loop
-      old := html
-      html = html
-      .replace /<!--#(include|flastmod|fsize)\s+(file|virtual)\s*=\s*"([^"]+)"\s*-->/g,
-        (match: string, command: string, type: string, url: string) =>
-          if type == 'file' and (url.includes('../') or path.isAbsolute(url))
-            console.log `!! Invalid #include file: ${url}`
-            @config.errormsg
-          else
-            target := path.join path.dirname(filename), url
-            switch command
-              when 'include'
-                @convertToString target
-              when 'flastmod'
-                @flastmod target
-              when 'fsize'
-                @fsize target
-              else
-                @config.errormsg  // should never happen; to satisfy TypeScript
-      .replace /<!--#config\s+(\w+)="([^"]+)"\s*-->/g,
+    fs.readFileSync filename, encoding: 'utf8'
+    .replace ///
+      <!--\#(include|flastmod|fsize|config|echo)\b(.*?)-->
+    ///g, (match: string, command: string, rest: string) =>
+      // #comment can have arbitrary content
+      return '' if command == 'comment'
+
+      // Parse arguments
+      args: [string, string][] := []
+      rest = rest.replace /\s*([\w\-]+)\s*=\s*"([^"]*)"\s*/g,
         (match: string, key: string, value: string) =>
-          @config[key] = value
+          args.push [key, value]
           ''
-      .replace /<!--#echo\s+var="([^"]+)"\s*-->/g,
-        (match: string, key: string) =>
-          val .= @vars[key] ?? @config.echomsg
-          val = val() if val instanceof Function
-          val
-      break if old == html
-    html
+      if rest
+        console.log `!! Invalid #${command} directive: ${rest}`
+        return @config.errormsg
+      function getArg(desired: string): string | undefined
+        for [key, value] of args
+          return value if key == desired
+        undefined
+
+      fileCommand := (func: (filename: string) => string, multi?: boolean): string =>
+        done .= false
+        (for [key, value] of args
+          break if done and not multi
+          switch key
+            when 'file'
+              if value.includes('../') or path.isAbsolute value
+                console.log `!! Invalid file argument: ${value}`
+                @config.errormsg
+              else
+                done = true
+                func path.join path.dirname(filename), value
+            when 'virtual'
+              done = true
+              func path.join path.dirname(filename), value
+            else
+              continue
+        ).join ''
+
+      switch command
+        // CIVET: shouldn't need parens below
+        when 'include'
+          fileCommand(@@convertToString, true)
+        when 'flastmod'
+          fileCommand(@@flastmod)
+        when 'fsize'
+          fileCommand(@@fsize)
+        when 'config'
+          for [key, value] of args
+            @config[key] = value
+          ''
+        when 'echo'
+          varName := getArg 'var'
+          if varName?
+            val .= @vars[varName] ?? @config.echomsg
+            val = val() if val instanceof Function
+            val
+          else
+            console.log `!! #echo directive missing var: ${rest}`
+            @config.errormsg
+        else
+          @config.errormsg  // should never happen; to satisfy TypeScript
 
 function convertFile(filename: string, outFilename?: string)
   // Top-level file conversion
