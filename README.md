@@ -8,21 +8,22 @@ You thus need to manually run the converter whenever the input/data changes.
 ## Installation
 
 ```sh
-npm install
-npm install -g @danielx/civet
+npm install -g @edemaine/shtml2html
 ```
 
 ## Usage
 
 ```sh
-civet shtml2html filename.shtml
-  # produces filename.html
+shtml2html filename.shtml    # produces filename.html
+shtml2html *.shtml           # produces *.html
 ```
 
 ## Supported Features
 
 * `<!--#include file="path"-->` includes a non-relative path
 * `<!--#include virtual="path"-->` includes a relative path
+  * Note: absolute paths are currently relative to the filesystem root.
+    TODO: way to specify document root.
 * `<!--#config key="value"-->` where `key` is among:
   * `echomsg`: message for unsupported `#echo`
   * `errormsg` (not currently used)
