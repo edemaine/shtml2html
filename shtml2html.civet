@@ -30,12 +30,32 @@ class Convert
       console.log `!! flastmod error: ${error}`
       @config.errormsg
 
+  fsize(filename: string): string
+    try
+      size := fs.statSync(filename).size
+      switch @config.sizefmt
+        when 'bytes'
+          `${size}`
+        when 'abbrev'
+          if size < 973
+            `${size}`
+          else if size < 973 * 1024
+            `${(size / 1024).toFixed 1}K`
+          else
+            `${(size / (1024 * 1024)).toFixed 1}M`
+        else
+          console.log `!! Invalid sizefmt: ${@config.sizefmt}`
+          @config.errormsg
+    catch error
+      console.log `!! fsize error: ${error}`
+      @config.errormsg
+
   convertToString(filename: string = @rootFilename): string
     html .= fs.readFileSync filename, encoding: 'utf8'
     loop
       old := html
       html = html
-      .replace /<!--#(include|flastmod)\s+(file|virtual)\s*=\s*"([^"]+)"\s*-->/g,
+      .replace /<!--#(include|flastmod|fsize)\s+(file|virtual)\s*=\s*"([^"]+)"\s*-->/g,
         (match: string, command: string, type: string, url: string) =>
           if type == 'file' and (url.includes('../') or path.isAbsolute(url))
             console.log `!! Invalid #include file: ${url}`
@@ -47,6 +67,8 @@ class Convert
                 @convertToString target
               when 'flastmod'
                 @flastmod target
+              when 'fsize'
+                @fsize target
               else
                 @config.errormsg  // should never happen; to satisfy TypeScript
       .replace /<!--#config\s+(\w+)="([^"]+)"\s*-->/g,

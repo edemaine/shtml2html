@@ -18,7 +18,7 @@ shtml2html filename.shtml    # produces filename.html
 shtml2html *.shtml           # produces *.html
 ```
 
-## Supported Features
+## Supported Directives
 
 * `<!--#include file="path"-->` includes a non-relative path
 * `<!--#include virtual="path"-->` includes a relative path
@@ -28,10 +28,13 @@ shtml2html *.shtml           # produces *.html
   modified date of non-relative path (via `timefmt`)
 * `<!--#flastmod virtual="path"-->`:
   modified date of relative path (via `timefmt`)
+* `<!--#fsize file="path"-->`: size of non-relative path (via `sizefmt`)
+* `<!--#fsize virtual="path"-->`: size of relative path (via `sizefmt`)
 * `<!--#config key="value"-->` where `key` is among:
   * `echomsg`: message for unsupported `#echo`
-  * `errormsg` (not currently used)
-  * `sizefmt` (not currently used)
+  * `errormsg`: error to include in the file when a directive fails
+    (a more descriptive error message should also be printed to console)
+  * `sizefmt`: format for `#fsize`, either "bytes" (default) or "abbrev"
   * `timefmt`: strftime format for `LAST_MODIFIED`
 * `<!--#echo var="value"-->` where `value` is among:
   * `DOCUMENT_NAME`: name of `.html` output (not `.shtml` input)
