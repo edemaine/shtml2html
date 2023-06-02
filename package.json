@@ -1,6 +1,6 @@
 {
   "name": "@edemaine/shtml2html",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Convert Apache server-side rendered HTML to static HTML",
   "type": "module",
   "main": "shtml2html.js",
