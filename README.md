@@ -21,6 +21,7 @@ civet shtml2html filename.shtml
 
 ## Supported Features
 
+* `<!--#include file="path"-->` includes a non-relative path
 * `<!--#include virtual="path"-->` includes a relative path
 * `<!--#config key="value"-->` where `key` is among:
   * `echomsg`: message for unsupported `#echo`

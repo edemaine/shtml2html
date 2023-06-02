@@ -29,9 +29,13 @@ class Convert
     loop
       old := html
       html = html
-      .replace /<!--#include\s+virtual\s*=\s*"([^"]+)"\s*-->/g,
-        (match: string, url: string) =>
-          @convertToString path.join path.dirname(filename), url
+      .replace /<!--#include\s+(file|virtual)\s*=\s*"([^"]+)"\s*-->/g,
+        (match: string, type: string, url: string) =>
+          if type == 'file' and (url.includes('../') or path.isAbsolute(url))
+            console.log `* Invalid #include file: ${url}`
+            @config.errormsg
+          else
+            @convertToString path.join path.dirname(filename), url
       .replace /<!--#config\s+(\w+)="([^"]+)"\s*-->/g,
         (match: string, key: string, value: string) =>
           @config[key] = value
