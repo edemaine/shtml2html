@@ -23,6 +23,7 @@ shtml2html filename.shtml
 
 ## Supported Features
 
+* `<!--#include virtual="path"-->` includes a relative path
 * `<!--#config key="value"-->` where `key` is among:
   * `echomsg`: message for unsupported `#echo`
   * `errormsg` (not currently used)
