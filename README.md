@@ -9,15 +9,13 @@ You thus need to manually run the converter whenever the input/data changes.
 
 ```sh
 npm install
-npm install -g coffeescript
+npm install -g @danielx/civet
 ```
-
-(currently assumes `/usr/bin/coffee` exists)
 
 ## Usage
 
 ```sh
-shtml2html filename.shtml
+civet shtml2html filename.shtml
   # produces filename.html
 ```
 
