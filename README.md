@@ -24,6 +24,10 @@ shtml2html *.shtml           # produces *.html
 * `<!--#include virtual="path"-->` includes a relative path
   * Note: absolute paths are currently relative to the filesystem root.
     TODO: way to specify document root.
+* `<!--#flastmod file="path"-->`:
+  modified date of non-relative path (via `timefmt`)
+* `<!--#flastmod virtual="path"-->`:
+  modified date of relative path (via `timefmt`)
 * `<!--#config key="value"-->` where `key` is among:
   * `echomsg`: message for unsupported `#echo`
   * `errormsg` (not currently used)

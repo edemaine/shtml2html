@@ -13,7 +13,6 @@ class Convert
   rootFilename: string
 
   @(@rootFilename: string, outFilename: string)
-    stat := fs.statSync @rootFilename
     @config =
       echomsg: '(none)'
       errormsg: '[an error occurred while processing this directive]'
@@ -21,21 +20,32 @@ class Convert
       timefmt: "%A, %d-%b-%Y %H:%M:%S %Z"
     @vars =
       DOCUMENT_NAME: outFilename
-      LAST_MODIFIED: =>
-        strftime @config.timefmt, stat.mtime
+      LAST_MODIFIED: => @flastmod @rootFilename
+
+  flastmod(filename: string)
+    try
+      strftime @config.timefmt, fs.statSync(filename).mtime
+    catch error
+      console.log `!! flastmod error: ${error}`
+      @config.errormsg
 
   convertToString(filename: string = @rootFilename)
     html .= fs.readFileSync filename, encoding: 'utf8'
     loop
       old := html
       html = html
-      .replace /<!--#include\s+(file|virtual)\s*=\s*"([^"]+)"\s*-->/g,
-        (match: string, type: string, url: string) =>
+      .replace /<!--#(include|flastmod)\s+(file|virtual)\s*=\s*"([^"]+)"\s*-->/g,
+        (match: string, command: string, type: string, url: string) =>
           if type == 'file' and (url.includes('../') or path.isAbsolute(url))
-            console.log `* Invalid #include file: ${url}`
+            console.log `!! Invalid #include file: ${url}`
             @config.errormsg
           else
-            @convertToString path.join path.dirname(filename), url
+            target := path.join path.dirname(filename), url
+            switch command
+              when 'include'
+                @convertToString target
+              when 'flastmod'
+                @flastmod target
       .replace /<!--#config\s+(\w+)="([^"]+)"\s*-->/g,
         (match: string, key: string, value: string) =>
           @config[key] = value
