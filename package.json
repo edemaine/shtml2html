@@ -2,11 +2,15 @@
   "name": "@edemaine/shtml2html",
   "version": "0.0.0",
   "description": "Convert Apache server-side rendered HTML to static HTML",
+  "type": "module",
   "main": "shtml2html.js",
   "bin": {
     "shtml2html": "shtml2html.js"
   },
-  "files": ["shtml2html.civet", "tsconfig.json"],
+  "files": [
+    "shtml2html.civet",
+    "tsconfig.json"
+  ],
   "scripts": {
     "prepare": "civet -c shtml2html.civet --js -o .js",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -18,6 +22,7 @@
   },
   "devDependencies": {
     "@danielx/civet": "^0.6.6",
-    "@types/node": "^20.2.5"
+    "@types/node": "^20.2.5",
+    "@types/strftime": "^0.9.4"
   }
 }

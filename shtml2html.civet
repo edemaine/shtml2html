@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 
-fs := require 'fs'
-path := require 'path'
-strftime := require 'strftime'
+fs from fs
+path from path
+strftime from strftime
+url from url
 
 class Convert
   // Maintains state of converter, including configuration and variables.
@@ -22,14 +23,14 @@ class Convert
       DOCUMENT_NAME: outFilename
       LAST_MODIFIED: => @flastmod @rootFilename
 
-  flastmod(filename: string)
+  flastmod(filename: string): string
     try
       strftime @config.timefmt, fs.statSync(filename).mtime
     catch error
       console.log `!! flastmod error: ${error}`
       @config.errormsg
 
-  convertToString(filename: string = @rootFilename)
+  convertToString(filename: string = @rootFilename): string
     html .= fs.readFileSync filename, encoding: 'utf8'
     loop
       old := html
@@ -46,6 +47,8 @@ class Convert
                 @convertToString target
               when 'flastmod'
                 @flastmod target
+              else
+                @config.errormsg  // should never happen; to satisfy TypeScript
       .replace /<!--#config\s+(\w+)="([^"]+)"\s*-->/g,
         (match: string, key: string, value: string) =>
           @config[key] = value
@@ -72,4 +75,6 @@ function main()
   for arg of process.argv[2..]
     convertFile arg
 
-main() if require.main == module
+main() if import.meta.url.startsWith('file:') and
+          fs.realpathSync(process.argv[1]) ==
+          fs.realpathSync url.fileURLToPath import.meta.url

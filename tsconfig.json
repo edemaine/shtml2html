@@ -1,8 +1,10 @@
 {
   "compilerOptions": {
+    "module": "nodenext",
     "strict": true,
+    "noImplicitAny": true,
     "jsx": "preserve",
-    "lib": ["es2021", "node"],
+    "lib": ["es2021"],
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
     "esModuleInterop": true
