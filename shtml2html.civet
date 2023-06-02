@@ -1,8 +1,13 @@
 #!/usr/bin/env node
+
 fs := require 'fs'
 path := require 'path'
 strftime := require 'strftime'
+
 class Convert
+  // Maintains state of converter, including configuration and variables.
+  // Make a new instance for each top-level file conversion
+  // (or use `convertFile`).
   config: Record<string, string>
   vars: Record<string, string | (() => string)>
   rootFilename: string
@@ -39,8 +44,9 @@ class Convert
       break if old == html
     html
 
-function convertFile(filename: string)
-  outFilename := filename.replace(/\.shtml$/, '') + '.html'
+function convertFile(filename: string, outFilename?: string)
+  // Top-level file conversion
+  outFilename ?= filename.replace(/\.shtml$/, '') + '.html'
   console.log filename, '->', outFilename
   convert := new Convert filename, outFilename
   fs.writeFileSync outFilename, """
