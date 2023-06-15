@@ -93,13 +93,12 @@ class Convert
         ).join ''
 
       switch command
-        // CIVET: shouldn't need parens below
         when 'include'
-          fileCommand(@@convertToString, true)
+          fileCommand @@convertToString, true
         when 'flastmod'
-          fileCommand(@@flastmod)
+          fileCommand @@flastmod
         when 'fsize'
-          fileCommand(@@fsize)
+          fileCommand @@fsize
         when 'config'
           for [key, value] of args
             @config[key] = value

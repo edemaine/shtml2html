@@ -21,8 +21,8 @@
     "strftime": "^0.10.0"
   },
   "devDependencies": {
-    "@danielx/civet": "^0.6.6",
-    "@types/node": "^20.2.5",
+    "@danielx/civet": "^0.6.8",
+    "@types/node": "^20.3.1",
     "@types/strftime": "^0.9.4"
   }
 }
